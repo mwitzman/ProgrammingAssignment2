@@ -1,42 +1,36 @@
-## cachematrix.R contains two functions. makeCacheMatrix maintains
-## the cache while cacheSolve checks the cache first and adds
-## any new matrix inversions to the cache.
-
-## makeCacheMatrix takes in a matrix, can check to see if 
-## a matrix inversion is already in the cache and can add
-## new matrix inversions to the cache.
+## cachematrix.R contains two functions. cacheSolve(makeCacheMatrix(matrix)) 
+## checks to see if a cached matrix inversion exists, returns the cache if it does, 
+## and calculates the inversion if needed (caching it before returning it)
 
 makeCacheMatrix <- function(x = matrix()) {
   m <- NULL
-  set <- function(y) {
+  set <- function(y) { ## set the cache location (current matrix)
     x <<- y
     m <<- NULL
   }
-  get <- function() x
-  setinverse <- function(solve) m <<- solve
-  getinverse <- function() m
-  list(set = set, get=get, setinverse = setinverse, getinverse = getinverse)
+  get <- function() x  ## retrieve cache location
+  setinverse <- function(solve) m <<- solve    ## set the inverse matrix value in cache
+  getinverse <- function() m   ## get the cached inverset matrix value
+  list(set = set, get = get, setinverse = setinverse, getinverse = getinverse)
 }
 
 
-## cacheSolve takes in a matrix, checks the cache for an inversion,
-## and returns the inversion from cache if it exists. 
-## If there is no cache value, cacheSolve calculates the inversion, 
-## caches it and returns it.
-
 cacheSolve <- function(x, ...) {
-    ## Get the inverse value from cache
+    ## Retrieve a value from the cache
     m <- x$getinverse()
-    ## Check to see if the return is NULL - if not,
-    ## return the inverse matrix from cache
+    ## message(m)
+    ## Check to see if the return is NULL
     if(!is.null(m)) {
+      ## if not NULL, return the value from cache
       message("getting cache inverse")
-      ## Return a matrix that is the inverse of 'x'
+      ## Return the cached inverse matrix
       return(m)
     }
+    ## need a check to see if the matrix is unchanged?
+    
     ## If no value in cache then solve, cache and return
-    data <- x$get()
-    m <- solve(data, ...)
+    inverse <- x$get()
+    m <- solve(inverse, ...)
     x$setinverse(m)
     m
   }
